@@ -8,7 +8,16 @@ export const AuthProvider = ({children}) =>{
     const [userdata, setuserdata] = useState("");
     const [checkloggedin,setcheckloggedin] = useState( isloggedin ? true : false )
     const [products,setproducts] = useState([]);
-    
+   
+   
+   
+   
+    const storeTokenInLS = (servertoken) =>{
+        setcheckloggedin(true)
+        localStorage.setItem("token",servertoken);
+        setisloggedin(servertoken);
+        
+    }
     const getdata =  async (type) => {
         let value;
         if(type==="users"){
@@ -57,8 +66,10 @@ export const AuthProvider = ({children}) =>{
 
      
     useEffect(()=>{
+       
         const userAuth =async () =>{
             if(isloggedin){
+             
                 try{
     
                     const response = await fetch("http://localhost:5000/api/user",{
@@ -85,16 +96,24 @@ export const AuthProvider = ({children}) =>{
                     alert("Invalid User Please Login Again")
                     
                 }
+            }else{
+                setuserdata([])
             }
             
             
         }
         userAuth();
-    },[isloggedin,checkloggedin])
+    },[isloggedin])
 
+    const logout = () =>{
+        setisloggedin("");
+        setcheckloggedin(false)
+        localStorage.removeItem("token");
+        
+    }
 
     useEffect(()=>{
-
+        
        if(checkloggedin){
         const getdata =async () =>{
             try {
@@ -129,18 +148,9 @@ export const AuthProvider = ({children}) =>{
     
 
 
-    const storeTokenInLS = (servertoken) =>{
-        setcheckloggedin(true)
-        return localStorage.setItem("token",servertoken);
-        
-    }
+    
 
-    const logout = () =>{
-        setisloggedin("");
-        setcheckloggedin(false)
-        return localStorage.removeItem("token");
-        
-    }
+    
 
     const UpdateUser = async (id,edituser,type) => {
         
